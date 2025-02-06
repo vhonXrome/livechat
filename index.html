@@ -1,257 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nohga</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        /* Smooth Fade-in Effect */
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f7fb;
-            color: #333;
-            transition: background-color 0.5s ease, color 0.5s ease;
-        }
-
-        /* Loading Animation */
-        .loader {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .loader div {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #1e3a8a;
-            border-top: 5px solid transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 24px;
-        }
-
-        /* Navigation */
-        nav {
-            display: flex;
-            justify-content: space-around;
-            padding: 15px;
-            background-color: white;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-            padding: 10px 20px;
-            transition: 0.3s;
-        }
-
-        nav a:hover {
-            background-color: #1e3a8a;
-            color: white;
-            border-radius: 5px;
-        }
-
-        /* Sections */
-        section {
-            padding: 60px 20px;
-            text-align: center;
-        }
-
-        /* Typing Animation */
-        .typing {
-            font-size: 28px;
-            font-weight: bold;
-            color: #1e3a8a;
-            height: 40px;
-        }
-
-        /* Dark Mode */
-        .dark-mode {
-            background-color: #222;
-            color: white;
-        }
-
-        .dark-mode nav {
-            background-color: #333;
-        }
-
-        /* Testimonials */
-        .testimonials {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding: 20px;
-            gap: 20px;
-            scrollbar-width: none;
-        }
-
-        .testimonials div {
-            flex: 0 0 300px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            scroll-snap-align: start;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Contact Form Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 40%;
-            text-align: center;
-        }
-
-        .close-btn {
-            background: red;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        /* Floating Button */
-        .floating-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #ff4081;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Chat Interface</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
+  <style>
+    #chat-container {
+      max-height: 80vh; /* Adjust height as needed */
+      overflow-y: auto; /* Make only the chat container scrollable */
+      display: flex;
+      flex-direction: column; /* Ensure messages stack from top to bottom */
+      padding: 10px;
+    }
+    .message-img {
+      max-width: 200px;
+      height: auto;
+    }
+    .message-content {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 10px;
+    }
+    .message-time {
+      font-size: 0.75rem;
+      color: gray;
+      margin-top: 2px;
+    }
+  </style>
 </head>
-<body onload="hideLoader()">
+<body class="flex items-center justify-center h-screen bg-gray-200">
+  <!-- Login Form -->
+  <div id="login-form" class="max-w-lg w-full bg-gray-100 rounded-lg shadow-lg p-4 flex flex-col items-center">
+    <h2 class="text-lg font-semibold text-gray-800 mb-4">Enter Your Name</h2>
+    <input id="name-input" type="text" class="bg-gray-200 rounded-full px-4 py-2 text-gray-700 mb-4" placeholder="Your name">
+    <button id="login-button" type="button" class="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2">Join Chat</button>
+  </div>
 
-    <!-- Loader -->
-    <div class="loader">
-        <div></div>
+  <!-- Chat Interface -->
+  <div id="chat-interface" class="hidden max-w-lg w-full bg-gray-100 rounded-lg shadow-lg p-4 flex flex-col">
+    <div class="flex items-center justify-between mb-4">
+      <h2 id="username" class="text-lg font-semibold text-gray-800"></h2>
+      <span id="timestamp" class="text-sm text-gray-500">Omniverse</span>
     </div>
-
-    <header>
-        <h1>Vhon Mathew Cudal Only Fans</h1>
-        <p class="typing"></p>
-    </header>
-
-    <nav>
-        <a href="https://www.facebook.com/vhon.matthew.cudal.2024">Profile</a>
-        <a href="https://static.wikia.nocookie.net/legobrick/images/d/d0/2550c01.jpg/revision/latest?cb=20110121052930">Fav Toy</a>
-        <a href="#none">Coming Soon</a>
-        <button onclick="toggleDarkMode()">Nigga Mode</button>
-    </nav>
-
-    <section id="home">
-        <h2>Experience the Future with Rome</h2>
-        <p>Macabit or Rome?, who's gonna win his heart?</p>
-    </section>
-
-    <section id="testimonials">
-        <h2>What People Say</h2>
-        <div class="testimonials">
-            <div>"Bagsak sa PR" - Abelita</div>
-            <div>"76 sa pr!" - Roncale</div>
-            <div>"Mahal si rome!" - Macabit</div>
-			<div>"Pogi!" - Medes</div>
-        </div>
-    </section>
-
-    <section id="contact">
-        <h2>Contact vhon here</h2>
-        <button onclick="openModal()">Open Contact Form</button>
-    </section>
-
-    <!-- Modal -->
-    <div class="modal" id="contactModal">
-        <div class="modal-content">
-            <h3>Contact Vhon Here</h3>
-            <input type="text" placeholder="Your Name"><br><br>
-            <input type="email" placeholder="Your Email"><br><br>
-            <button class="close-btn" onclick="closeModal()">Close</button>
-        </div>
+    <div id="chat-container" class="flex flex-col">
+      <!-- Messages will be dynamically inserted here -->
     </div>
+    <div class="flex flex-col mt-4">
+      <input id="message-input" type="text" class="bg-gray-200 rounded-full px-4 py-2 text-gray-700 mb-2 focus:outline-none" placeholder="Type a message...">
+      <input id="file-input" type="file" class="mb-2" accept="image/*">
+      <button id="send-button" type="button" class="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 focus:outline-none">Send</button>
+    </div>
+  </div>
 
-    <!-- Floating Scroll Button -->
-    <button class="floating-btn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">↑</button>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+    import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, orderBy } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
+    import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js';
+    import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js';
 
-    <script>
-        // Hide Loader
-        function hideLoader() {
-            document.querySelector('.loader').style.display = 'none';
-        }
+    const firebaseConfig = {
+      apiKey: "AIzaSyCcfuOljU6Li6zDnls7P11vknHjCy4byu4",
+      authDomain: "live-chat-2e7ae.firebaseapp.com",
+      projectId: "live-chat-2e7ae",
+      storageBucket: "live-chat-2e7ae.appspot.com",
+      messagingSenderId: "261576502855",
+      appId: "1:261576502855:web:024b7786a9c1b91b8e0b62",
+      measurementId: "G-P1JJMB4JDY"
+    };
 
-        // Dark Mode Toggle
-        function toggleDarkMode() {
-            document.body.classList.toggle("dark-mode");
-        }
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
 
-        // Typing Effect
-        let text = "Building the Future with Rome...";
-        let index = 0;
-        function type() {
-            if (index < text.length) {
-                document.querySelector(".typing").textContent += text.charAt(index);
-                index++;
-                setTimeout(type, 100);
+    // Show chat interface after login
+    document.getElementById('login-button').addEventListener('click', async function() {
+      const nameInput = document.getElementById('name-input');
+      const username = nameInput.value.trim();
+
+      if (username !== '') {
+        document.getElementById('login-form').classList.add('hidden');
+        document.getElementById('chat-interface').classList.remove('hidden');
+        document.getElementById('username').textContent = username;
+
+        // Send message
+        document.getElementById('send-button').addEventListener('click', async function() {
+          const messageInput = document.getElementById('message-input');
+          const messageText = messageInput.value.trim();
+          const fileInput = document.getElementById('file-input');
+
+          if (messageText !== '' || fileInput.files.length > 0) {
+            try {
+              let imageUrl = '';
+              if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const storageRef = ref(storage, `Ron/${file.name}`);
+                await uploadBytes(storageRef, file);
+                imageUrl = await getDownloadURL(storageRef);
+              }
+
+              await addDoc(collection(db, 'messages'), {
+                username: username,
+                text: messageText,
+                imageUrl: imageUrl,
+                timestamp: serverTimestamp()
+              });
+              messageInput.value = '';
+              fileInput.value = ''; // Clear file input
+            } catch (e) {
+              console.error("Error adding document: ", e);
             }
-        }
-        setTimeout(type, 1000);
+          }
+        });
 
-        // Modal Functions
-        function openModal() {
-            document.getElementById('contactModal').style.display = 'flex';
-        }
+        document.getElementById('message-input').addEventListener('keypress', function(event) {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            document.getElementById('send-button').click();
+          }
+        });
 
-        function closeModal() {
-            document.getElementById('contactModal').style.display = 'none';
-        }
-    </script>
+        // Listen for new messages
+        onSnapshot(collection(db, 'messages'), orderBy('timestamp', 'asc'), (snapshot) => {
+          const chatContainer = document.getElementById('chat-container');
+          const isScrolledToBottom = chatContainer.scrollHeight - chatContainer.scrollTop === chatContainer.clientHeight;
+
+          snapshot.docChanges().forEach(change => {
+            if (change.type === 'added') {
+              const message = change.doc.data();
+              const messageDiv = document.createElement('div');
+              messageDiv.classList.add('message-content');
+
+              const messageParagraph = document.createElement('p');
+              messageParagraph.classList.add('text-gray-800');
+              messageParagraph.textContent = `${message.username}: ${message.text}`;
+
+              // Timestamp
+              if (message.timestamp) {
+                const timestampParagraph = document.createElement('p');
+                timestampParagraph.classList.add('message-time');
+                const timestamp = message.timestamp.toDate();
+                timestampParagraph.textContent = `${timestamp.getHours()}:${timestamp.getMinutes()}`;
+                messageDiv.appendChild(timestampParagraph);
+              }
+
+              messageDiv.appendChild(messageParagraph);
+
+              if (message.imageUrl) {
+                const image = document.createElement('img');
+                image.src = message.imageUrl;
+                image.onload = () => console.log("Image loaded successfully:", image.src);
+                image.onerror = () => console.error("Error loading image:", image.src);
+                image.classList.add('message-img', 'mt-2');
+                messageDiv.appendChild(image);
+              }
+
+              chatContainer.appendChild(messageDiv);
+
+              // Scroll to the bottom if user is currently at the bottom
+              if (isScrolledToBottom) {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+              }
+            }
+          });
+
+          // Ensure scrolling to the bottom on initial load
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+      }
+    });
+  </script>
 </body>
 </html>
