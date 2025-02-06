@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nohga</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* Smooth Fade-in Effect */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fb;
+            color: #333;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loader div {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #1e3a8a;
+            border-top: 5px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background-color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #1e3a8a;
+            color: white;
+            border-radius: 5px;
+        }
+
+        /* Sections */
+        section {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        /* Typing Animation */
+        .typing {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e3a8a;
+            height: 40px;
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background-color: #222;
+            color: white;
+        }
+
+        .dark-mode nav {
+            background-color: #333;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 20px;
+            gap: 20px;
+            scrollbar-width: none;
+        }
+
+        .testimonials div {
+            flex: 0 0 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            scroll-snap-align: start;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Contact Form Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 40%;
+            text-align: center;
+        }
+
+        .close-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Floating Button */
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ff4081;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body onload="hideLoader()">
+
+    <!-- Loader -->
+    <div class="loader">
+        <div></div>
+    </div>
+
+    <header>
+        <h1>Vhon Mathew Cudal Only Fans</h1>
+        <p class="typing"></p>
+    </header>
+
+    <nav>
+        <a href="https://www.facebook.com/vhon.matthew.cudal.2024">Profile</a>
+        <a href="https://static.wikia.nocookie.net/legobrick/images/d/d0/2550c01.jpg/revision/latest?cb=20110121052930">Fav Toy</a>
+        <a href="#none">Coming Soon</a>
+        <button onclick="toggleDarkMode()">Nigga Mode</button>
+    </nav>
+
+    <section id="home">
+        <h2>Experience the Future with Rome</h2>
+        <p>Macabit or Rome?, who's gonna win his heart?</p>
+    </section>
+
+    <section id="testimonials">
+        <h2>What People Say</h2>
+        <div class="testimonials">
+            <div>"Bagsak sa PR" - Abelita</div>
+            <div>"76 sa pr!" - Roncale</div>
+            <div>"Mahal si rome!" - Macabit</div>
+			<div>"Pogi!" - Medes</div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Contact vhon here</h2>
+        <button onclick="openModal()">Open Contact Form</button>
+    </section>
+
+    <!-- Modal -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <h3>Contact Vhon Here</h3>
+            <input type="text" placeholder="Your Name"><br><br>
+            <input type="email" placeholder="Your Email"><br><br>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Floating Scroll Button -->
+    <button class="floating-btn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">↑</button>
+
+    <script>
+        // Hide Loader
+        function hideLoader() {
+            document.querySelector('.loader').style.display = 'none';
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        // Typing Effect
+        let text = "Building the Future with Rome...";
+        let index = 0;
+        function type() {
+            if (index < text.length) {
+                document.querySelector(".typing").textContent += text.charAt(index);
+                index++;
+                setTimeout(type, 100);
+            }
+        }
+        setTimeout(type, 1000);
+
+        // Modal Functions
+        function openModal() {
+            document.getElementById('contactModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('contactModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
